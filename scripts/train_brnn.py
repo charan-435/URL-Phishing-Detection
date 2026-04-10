@@ -10,7 +10,7 @@ from models.brnn.brnn_complex import BrnnComplex
 
 def main(args):
     fe = FeatureExtractor(char_index_path="dataset/char_index")
-    fe.load_from_file("dataset/train/train.txt")
+    fe.load_from_file("dataset/train/small_train.txt")
 
     x = fe.get_sequences(sequence_length=args.sequence_length)
     y = fe.get_labels()
