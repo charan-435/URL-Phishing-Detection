@@ -1,2 +1,7 @@
-scripts/__pycache__
 directml-env
+__pycache__
+scripts/__pycache__
+models/brnn/__pycache__
+models/cnn/__pycache__
+models/rnn/__pycache__
+models/att/__pycache__
