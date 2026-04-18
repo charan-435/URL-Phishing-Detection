@@ -5,10 +5,24 @@ import tensorflow as tf
 import numpy as np
 from feature_extraction import FeatureExtractor
 
+# whitelist for trusted domains
+TRUSTED = ["google.com", "facebook.com", "apple.com", "microsoft.com", "amazon.com", "github.com"]
+
 # analyze a single url and print results
 def check_url(url, model_path, char_index_path, seq_len=512):
     print(f"--- Checking: {url} ---")
     
+    # clean url
+    u = url.lower().replace("http://", "").replace("https://", "").replace("www.", "").strip("/")
+    
+    # check whitelist
+    if u in TRUSTED or any(u.startswith(t + "/") for t in TRUSTED):
+        print("\n" + "="*30)
+        print("  RESULT:     LEGITIMATE")
+        print("  CONFIDENCE: 100.00% (Trusted)")
+        print("="*30)
+        return
+
     # paths check
     if not os.path.exists(char_index_path):
         print("err: char_index missing. train first!")
