@@ -37,7 +37,17 @@ python evaluate.py --model cnn_base --epochs 10
 python evaluate.py --model ann_base --epochs 20
 ```
 
-### 3. See the Results
+### 3. Check a Single URL
+You can now test any URL instantly from your terminal using the new `predict.py` utility. It uses a trained model to give you a result in seconds.
+```bash
+# Check a suspected phishing URL
+python predict.py --url http://secure-login-bank.com/update
+
+# Specify a different model
+python predict.py --url http://google.com --model test_results/baseline/rnn_base/model_all.keras
+```
+
+### 4. See the Comparison Results
 After training your models, run the summary script to generate performance charts:
 ```bash
 python summary.py

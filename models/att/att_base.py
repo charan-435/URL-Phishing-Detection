@@ -1,32 +1,25 @@
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import (
-    Dense, LSTM, Embedding, MultiHeadAttention,
-    Flatten, Dropout, Input, GlobalAveragePooling1D
-)
+from tensorflow.keras.layers import Dense, Embedding, MultiHeadAttention, Input, GlobalAveragePooling1D
 
-
+# basic attention model
 class AttBase:
-    def __init__(self, embed_dim, sequence_length):
+    def __init__(self, embed_dim, seq_len):
         self.embed_dim = embed_dim
-        self.seq_len = sequence_length
+        self.seq_len = seq_len
 
     def build(self, char_index):
+        # uses functional api for attention
         vocab_size = len(char_index)
-        print(f"[att_base] vocab size: {vocab_size}")
+        inputs = Input(shape=(self.seq_len,))
 
-        # using functional api here because MultiHeadAttention needs query + value args
-        inputs = Input(shape=(self.seq_len,), name="input")
+        # embed chars
+        x = Embedding(vocab_size + 1, self.embed_dim, input_length=self.seq_len)(inputs)
 
-        x = Embedding(vocab_size + 1, self.embed_dim, input_length=self.seq_len, name="embedding")(inputs)
+        # multi-head attention
+        x = MultiHeadAttention(num_heads=4, key_dim=self.embed_dim)(x, x)
 
-        # self-attention: the url attends to itself
-        # (query and value are the same tensor)
-        x = MultiHeadAttention(num_heads=4, key_dim=self.embed_dim, name="self_attention")(x, x)
+        # mean pooling 
+        x = GlobalAveragePooling1D()(x)
+        outputs = Dense(1, activation="sigmoid")(x)
 
-        # average pooling to collapse sequence dimension
-        x = GlobalAveragePooling1D(name="gap")(x)
-
-        outputs = Dense(1, activation="sigmoid", name="output")(x)
-
-        model = Model(inputs, outputs, name="att_base")
-        return model
+        return Model(inputs, outputs, name="att_base")
