@@ -9,21 +9,22 @@ from models.att.att_complex import AttComplex
 
 
 def main(args):
+    # load and prepare training data
     fe = FeatureExtractor(char_index_path="dataset/char_index")
     fe.load_from_file("dataset/train/train.txt")
 
     x = fe.get_sequences(sequence_length=args.sequence_length)
     y = fe.get_labels()
 
-    # choose model
+    # pick attention model variant
     if args.model == "att_base":
-        model_builder = AttBase(args.embed_dim, args.sequence_length)
+        builder = AttBase(args.embed_dim, args.sequence_length)
     elif args.model == "att_complex":
-        model_builder = AttComplex(args.embed_dim, args.sequence_length)
+        builder = AttComplex(args.embed_dim, args.sequence_length)
     else:
-        raise ValueError(f"Unknown model: {args.model}. Choose 'att_base' or 'att_complex'.")
+        raise ValueError(f"unknown model: {args.model}. choose 'att_base' or 'att_complex'")
 
-    model = model_builder.build(fe.tokener.word_index)
+    model = builder.build(fe.tokener.word_index)
     model.compile(
         loss="binary_crossentropy",
         optimizer="adam",
@@ -38,15 +39,15 @@ def main(args):
     )
 
     model.save(f"models/att/{args.model}.keras")
+    print(f"model saved to models/att/{args.model}.keras")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default="att_base")
-    parser.add_argument("--embed_dim", type=int, default=128)
+    parser.add_argument("--model",           type=str, default="att_base")
+    parser.add_argument("--embed_dim",       type=int, default=128)
     parser.add_argument("--sequence_length", type=int, default=512)
-    parser.add_argument("--epochs", type=int, default=10)
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--epochs",          type=int, default=10)
+    parser.add_argument("--batch_size",      type=int, default=32)
     args = parser.parse_args()
-
     main(args)
