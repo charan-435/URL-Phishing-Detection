@@ -1,53 +1,39 @@
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import (
-    Dense, LSTM, Bidirectional, Embedding, MultiHeadAttention,
-    Flatten, Dropout, Input, LayerNormalization
-)
+from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Embedding, MultiHeadAttention, Flatten, Dropout, Input, LayerNormalization
 
-
+# deep attention and rnn model
 class AttComplex:
-    def __init__(self, embed_dim, sequence_length):
+    def __init__(self, embed_dim, seq_len):
         self.embed_dim = embed_dim
-        self.seq_len = sequence_length
+        self.seq_len = seq_len
 
     def build(self, char_index):
+        # build complex model
         vocab_size = len(char_index)
-        print(f"[att_complex] vocab size: {vocab_size}")
+        inputs = Input(shape=(self.seq_len,))
+        x = Embedding(vocab_size + 1, self.embed_dim, input_length=self.seq_len)(inputs)
 
-        inputs = Input(shape=(self.seq_len,), name="input")
-        x = Embedding(vocab_size + 1, self.embed_dim, input_length=self.seq_len, name="embedding")(inputs)
+        # block 1: lstm + attention
+        x = LSTM(128, return_sequences=True)(x)
+        x = Dropout(0.2)(x)
+        x = Bidirectional(LSTM(128, return_sequences=True))(x)
+        
+        # residual attention block
+        attn1 = MultiHeadAttention(num_heads=4, key_dim=self.embed_dim)(x, x)
+        x = LayerNormalization()(x + attn1)
+        x = Dropout(0.2)(x)
 
-        # block 1: lstm -> bidirectional lstm -> self-attention
-        x = LSTM(128, return_sequences=True, name="lstm1")(x)
-        x = Dropout(0.2, name="drop1")(x)
+        # block 2: more rnn + attention
+        x = Bidirectional(LSTM(128, return_sequences=True))(x)
+        x = LSTM(128, return_sequences=True)(x)
+        
+        attn2 = MultiHeadAttention(num_heads=4, key_dim=self.embed_dim)(x, x)
+        x = LayerNormalization()(x + attn2)
+        x = Dropout(0.2)(x)
 
-        x = Bidirectional(LSTM(128, return_sequences=True), name="bilstm1")(x)
-        x = Dropout(0.2, name="drop2")(x)
+        # final part
+        x = LSTM(128, return_sequences=True)(x)
+        x = Flatten()(x)
+        outputs = Dense(1, activation="sigmoid")(x)
 
-        # self-attention + residual connection + layer norm
-        # (the residual helps with training stability)
-        attn1 = MultiHeadAttention(num_heads=4, key_dim=self.embed_dim, name="attention1")(x, x)
-        x = LayerNormalization(name="norm1")(x + attn1)
-        x = Dropout(0.2, name="drop3")(x)
-
-        # block 2: another bilstm -> lstm -> attention stack
-        x = Bidirectional(LSTM(128, return_sequences=True), name="bilstm2")(x)
-        x = Dropout(0.2, name="drop4")(x)
-
-        x = LSTM(128, return_sequences=True, name="lstm2")(x)
-        x = Dropout(0.2, name="drop5")(x)
-
-        attn2 = MultiHeadAttention(num_heads=4, key_dim=self.embed_dim, name="attention2")(x, x)
-        x = LayerNormalization(name="norm2")(x + attn2)
-        x = Dropout(0.2, name="drop6")(x)
-
-        # block 3: final lstm
-        x = LSTM(128, return_sequences=True, name="lstm3")(x)
-        x = Dropout(0.2, name="drop7")(x)
-
-        # flatten and output
-        x = Flatten(name="flatten")(x)
-        outputs = Dense(1, activation="sigmoid", name="output")(x)
-
-        model = Model(inputs, outputs, name="att_complex")
-        return model
+        return Model(inputs, outputs, name="att_complex")

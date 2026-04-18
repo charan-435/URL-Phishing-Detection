@@ -1,139 +1,79 @@
-# summary.py
-# reads all raw_test_results.json files under test_results/ and
-# generates comparison charts across all trained models
-#
-# usage:
-#   python summary.py
-#   python summary.py --results_dir test_results
-
+# summary script to compare all results
 import argparse
 import json
 import os
-
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-
-def collect_results(results_dir):
-    # walk the results directory and collect all result files
-    records = []
-    for category in sorted(os.listdir(results_dir)):
-        cat_path = os.path.join(results_dir, category)
-        if not os.path.isdir(cat_path):
-            continue
+# find all json results and collect them
+def get_results(res_dir):
+    data_list = []
+    for cat in sorted(os.listdir(res_dir)):
+        cat_path = os.path.join(res_dir, cat)
+        if not os.path.isdir(cat_path): continue
         for model_name in sorted(os.listdir(cat_path)):
-            json_path = os.path.join(cat_path, model_name, "raw_test_results.json")
-            if not os.path.isfile(json_path):
-                continue
-            with open(json_path) as f:
-                data = json.load(f)
-            records.append({
-                "label":         f"{category}\n{model_name}",
-                "category":      category,
-                "model":         model_name,
-                "accuracy":      data.get("test_accuracy", 0.0),
-                "training_time": data.get("training_time_seconds", 0.0),
+            json_file = os.path.join(cat_path, model_name, "raw_test_results.json")
+            if not os.path.isfile(json_file): continue
+            with open(json_file) as f:
+                res = json.load(f)
+            data_list.append({
+                "label": f"{cat}\n{model_name}",
+                "cat": cat, "name": model_name,
+                "acc": res.get("test_accuracy", 0.0),
+                "time": res.get("training_time_seconds", 0.0)
             })
-    return records
+    return data_list
 
+# accuracy chart
+def plot_acc(results, path):
+    names = [r["label"] for r in results]
+    accs = [r["acc"] for r in results]
+    cats = list(dict.fromkeys(r["cat"] for r in results))
+    colors = plt.cm.tab10.colors
+    bar_colors = [colors[cats.index(r["cat"]) % len(colors)] for r in results]
 
-def plot_metrics(records, out_path):
-    # bar chart comparing test accuracy across all models
-    labels = [r["label"] for r in records]
-    accs = [r["accuracy"] for r in records]
+    plt.figure(figsize=(max(10, len(names)*1.4), 6))
+    bars = plt.bar(range(len(names)), accs, color=bar_colors)
+    plt.xticks(range(len(names)), names, fontsize=8)
+    plt.ylabel("accuracy")
+    plt.title("model accuracy comparison")
+    
+    for bar, val in zip(bars, accs):
+        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01, f"{val:.3f}", ha="center", fontsize=7)
+    
+    plt.savefig(path); plt.close()
 
-    # colour-code bars by category
-    categories = list(dict.fromkeys(r["category"] for r in records))
-    palette = plt.cm.tab10.colors
-    colors = [palette[categories.index(r["category"]) % len(palette)] for r in records]
+# training time chart
+def plot_time(results, path):
+    names = [r["label"] for r in results]
+    times = [r["time"] for r in results]
+    cats = list(dict.fromkeys(r["cat"] for r in results))
+    colors = plt.cm.tab10.colors
+    bar_colors = [colors[cats.index(r["cat"]) % len(colors)] for r in results]
 
-    x = np.arange(len(labels))
-    fig, ax = plt.subplots(figsize=(max(10, len(labels) * 1.4), 6))
-    bars = ax.bar(x, accs, color=colors, edgecolor="white", linewidth=0.8)
+    plt.figure(figsize=(10, max(5, len(names)*0.6)))
+    plt.barh(range(len(names)), times, color=bar_colors)
+    plt.yticks(range(len(names)), names, fontsize=8)
+    plt.xlabel("time (s)")
+    plt.title("model training time")
+    plt.gca().invert_yaxis()
+    plt.savefig(path); plt.close()
 
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels, fontsize=8, ha="center")
-    ax.set_ylim(0, 1.05)
-    ax.set_ylabel("test accuracy")
-    ax.set_title("model accuracy comparison")
-    ax.grid(axis="y", alpha=0.3)
-
-    # show accuracy value above each bar
-    for bar, acc in zip(bars, accs):
-        ax.text(bar.get_x() + bar.get_width() / 2,
-                bar.get_height() + 0.01,
-                f"{acc:.3f}", ha="center", va="bottom", fontsize=7)
-
-    # legend showing categories
-    handles = [
-        plt.Rectangle((0, 0), 1, 1, color=palette[i % len(palette)])
-        for i, _ in enumerate(categories)
-    ]
-    ax.legend(handles, categories, title="category", fontsize=8, loc="lower right", framealpha=0.8)
-
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
-    print(f"saved: {out_path}")
-
-
-def plot_running_time(records, out_path):
-    # horizontal bar chart showing how long each model took to train
-    labels = [r["label"] for r in records]
-    times = [r["training_time"] for r in records]
-
-    categories = list(dict.fromkeys(r["category"] for r in records))
-    palette = plt.cm.tab10.colors
-    colors = [palette[categories.index(r["category"]) % len(palette)] for r in records]
-
-    y = np.arange(len(labels))
-    fig, ax = plt.subplots(figsize=(10, max(5, len(labels) * 0.55)))
-    bars = ax.barh(y, times, color=colors, edgecolor="white", linewidth=0.8)
-
-    ax.set_yticks(y)
-    ax.set_yticklabels(labels, fontsize=8)
-    ax.set_xlabel("training time (seconds)")
-    ax.set_title("model training time comparison")
-    ax.grid(axis="x", alpha=0.3)
-    ax.invert_yaxis()
-
-    # show time value at end of each bar
-    for bar, t in zip(bars, times):
-        ax.text(bar.get_width() + max(times) * 0.01,
-                bar.get_y() + bar.get_height() / 2,
-                f"{t:.1f}s", va="center", fontsize=7)
-
-    handles = [
-        plt.Rectangle((0, 0), 1, 1, color=palette[i % len(palette)])
-        for i, _ in enumerate(categories)
-    ]
-    ax.legend(handles, categories, title="category", fontsize=8, loc="lower right", framealpha=0.8)
-
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
-    print(f"saved: {out_path}")
-
-
-def main(args):
+def run_summary(args):
     if not os.path.isdir(args.results_dir):
-        print(f"directory not found: {args.results_dir}")
+        print("results dir not found!")
         return
-
-    records = collect_results(args.results_dir)
-    if not records:
-        print("no raw_test_results.json files found - run evaluate.py first")
+    res = get_results(args.results_dir)
+    if not res:
+        print("no results found!")
         return
-
-    print(f"found {len(records)} model result(s)")
-    plot_metrics(records, os.path.join(args.results_dir, "metrics.png"))
-    plot_running_time(records, os.path.join(args.results_dir, "running_time.png"))
-
+    plot_acc(res, os.path.join(args.results_dir, "metrics.png"))
+    plot_time(res, os.path.join(args.results_dir, "running_time.png"))
+    print("charts saved.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--results_dir", type=str, default="test_results")
-    args = parser.parse_args()
-    main(args)
+    run_summary(parser.parse_args())
