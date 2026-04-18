@@ -5,89 +5,79 @@ from urllib.parse import urlparse
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing import sequence as keras_sequence
 
-FEATURE_NAMES = [
-    # --- length-based ---
-    "url_length",           # total character count of the raw URL
-    "domain_length",        # length of the domain/hostname only
-    "path_length",          # length of the path component
-    "subdomain_count",      # number of subdomains (dots in hostname - 1)
-    "path_depth",           # number of '/' in the path
 
-    # --- character counts ---
-    "count_dots",           # '.'  often high in phishing (e.g. a.b.c.evil.com)
-    "count_hyphens",        # '-'  common in spoofed domains
-    "count_underscores",    # '_'
-    "count_slashes",        # '/'
-    "count_at",             # '@'  e.g. http://legit.com@evil.com
-    "count_question",       # '?'  query string presence
-    "count_equals",         # '='
-    "count_ampersand",      # '&'
-    "count_percent",        # '%'  URL encoding tricks
-    "count_digits",         # total digit characters in URL
+# these are all the features we compute per URL
+# grouped into categories so its easier to understand whats going on
+feature_names = [
+    # length stuff
+    "url_length",        # total chars in the url
+    "domain_length",     # how long is just the domain
+    "path_length",       # how long is the path part
+    "subdomain_count",   # how many subdomains (dots in hostname - 1)
+    "path_depth",        # number of slashes in path
 
-    # --- ratio-based ---
-    "digit_ratio",          # digits / total length
-    "letter_ratio",         # letters / total length
-    "special_char_ratio",   # non-alphanumeric / total length
+    # counting special characters
+    "count_dots",        # dots -> phishing urls usually have loads (a.b.c.evil.com)
+    "count_hyphens",     # hyphens -> spoofed domains love hyphens
+    "count_underscores", # underscores
+    "count_slashes",     # slashes
+    "count_at",          # @ sign -> http://legit.com@evil.com trick
+    "count_question",    # question marks -> query string
+    "count_equals",      # equals sign
+    "count_ampersand",   # ampersand
+    "count_percent",     # percent -> url encoding tricks
+    "count_digits",      # total number of digit characters
 
-    # --- entropy ---
-    "url_entropy",          # Shannon entropy of full URL (randomness indicator)
-    "domain_entropy",       # Shannon entropy of domain only
+    # ratios
+    "digit_ratio",       # digits / total length
+    "letter_ratio",      # letters / total length
+    "special_char_ratio",# non-alphanumeric / total length
 
-    # --- binary flags ---
-    "has_ip_address",       # 1 if hostname looks like an IP (e.g. 192.168.1.1)
-    "has_port",             # 1 if URL specifies a port number
-    "has_https",            # 1 if scheme is https
-    "has_http",             # 1 if scheme is http
-    "has_at_symbol",        # 1 if '@' present anywhere
-    "has_double_slash",     # 1 if '//' appears in path (redirect trick)
-    "has_dash_in_domain",   # 1 if '-' present in domain
-    "is_shortened",         # 1 if domain matches known URL shortener list
+    # entropy (how random/chaotic the string looks)
+    "url_entropy",       # shannon entropy of full url
+    "domain_entropy",    # shannon entropy of just the domain
+
+    # yes/no flags
+    "has_ip_address",    # 1 if it looks like an IP e.g. 192.168.1.1
+    "has_port",          # 1 if theres a port number in the url
+    "has_https",         # 1 if it starts with https
+    "has_http",          # 1 if it starts with http://
+    "has_at_symbol",     # 1 if @ appears anywhere
+    "has_double_slash",  # 1 if // appears in path -> redirect trick
+    "has_dash_in_domain",# 1 if domain has a dash in it
+    "is_shortened",      # 1 if its a known url shortener (bit.ly etc)
 ]
 
-# Common URL shortener domains
-_SHORTENERS = {
+# known shortener domains - we flag these as suspicious
+shortener_list = {
     "bit.ly", "goo.gl", "tinyurl.com", "ow.ly", "t.co",
     "buff.ly", "rebrand.ly", "cutt.ly", "is.gd", "bl.ink",
     "short.io", "tiny.cc", "lc.chat", "soo.gd", "s2r.co",
 }
 
 
-
-
 class FeatureExtractor:
 
-    def __init__(self, char_index_path: str = "../dataset/char_index"):
-        """
-        Parameters
-        ----------
-        char_index_path : str
-            Path to the saved char_index JSON file produced during training.
-        """
+    def __init__(self, char_index_path="../dataset/char_index"):
+        # load the character tokenizer from a saved json file
+        # this was made during training with build_char_index.py
         self.tokener = Tokenizer(lower=True, char_level=True, oov_token="-n-")
         self.tokener.word_index = json.loads(open(char_index_path).read())
 
-        self._urls:   list = []
-        self._labels: list = []
+        # storage for loaded data
+        self.urls = []
+        self.labels = []
 
-    # ---------------------------------------------------------------- #
-    # Loading
-    # ---------------------------------------------------------------- #
+    # ---- loading data ----
 
-    def load_from_file(self, filepath: str) -> None:
-        """
-        Read a tab-separated dataset file and store URLs + labels.
-
-        Parameters
-        ----------
-        filepath : str
-            Path to train.txt / test.txt / val.txt
-        """
-        self._urls   = []
-        self._labels = []
+    def load_from_file(self, filepath):
+        # reads a tab-separated file: label\turl
+        # label is either "phishing" or "legitimate"
+        self.urls = []
+        self.labels = []
 
         with open(filepath, "r") as f:
-            lines = [l.strip() for l in f.readlines() if l.strip()]
+            lines = [line.strip() for line in f.readlines() if line.strip()]
 
         skipped = 0
         for line in lines:
@@ -96,7 +86,8 @@ class FeatureExtractor:
                 skipped += 1
                 continue
 
-            label_str, url = parts[0], parts[1]
+            label_str = parts[0]
+            url = parts[1]
 
             if label_str == "phishing":
                 label = 0
@@ -106,132 +97,105 @@ class FeatureExtractor:
                 skipped += 1
                 continue
 
-            # strip scheme for consistency (same as dl_gen.py)
-            clean_url = url.lower().replace("http://", "").replace("https://", "")
-            self._urls.append(clean_url)
-            self._labels.append(label)
+            # strip off http/https so urls are consistent
+            clean = url.lower().replace("http://", "").replace("https://", "")
+            self.urls.append(clean)
+            self.labels.append(label)
 
-        print("[FeatureExtractor] Loaded {} URLs ({} skipped) from {}".format(
-            len(self._urls), skipped, filepath))
+        print("loaded {} urls ({} skipped) from {}".format(len(self.urls), skipped, filepath))
 
-    # ---------------------------------------------------------------- #
-    # Feature outputs
-    # ---------------------------------------------------------------- #
+    # ---- feature generation ----
 
-    def get_sequences(self, sequence_length: int = 512) -> np.ndarray:
-        """
-        Char-level tokenized + padded sequences.
-
-        Returns
-        -------
-        np.ndarray of shape (N, sequence_length)
-        """
+    def get_sequences(self, sequence_length=512):
+        # converts each url to a sequence of character-level token ids
+        # then pads them all to the same length
         self._check_loaded()
-        seqs = self.tokener.texts_to_sequences(self._urls)
+        seqs = self.tokener.texts_to_sequences(self.urls)
         padded = keras_sequence.pad_sequences(seqs, maxlen=sequence_length)
-        print("[FeatureExtractor] Sequences shape: {}".format(padded.shape))
+        print("sequences shape:", padded.shape)
         return padded
 
-    def get_handcrafted(self) -> np.ndarray:
-        """
-        Handcrafted numerical feature matrix.
-
-        Returns
-        -------
-        np.ndarray of shape (N, len(FEATURE_NAMES))
-        """
+    def get_handcrafted(self):
+        # computes all hand-engineered numeric features for each url
         self._check_loaded()
-        matrix = np.array([self._extract_one(url) for url in self._urls], dtype=np.float32)
-        print("[FeatureExtractor] Handcrafted features shape: {} | features: {}".format(
-            matrix.shape, len(FEATURE_NAMES)))
+        matrix = np.array([self._extract_one(u) for u in self.urls], dtype=np.float32)
+        print("handcrafted features shape:", matrix.shape, "| num features:", len(feature_names))
         return matrix
 
-    def get_labels(self) -> np.ndarray:
-        """
-        Integer labels. 0 = phishing, 1 = legitimate.
-
-        Returns
-        -------
-        np.ndarray of shape (N,)
-        """
+    def get_labels(self):
+        # returns labels as a numpy array (0=phishing, 1=legit)
         self._check_loaded()
-        return np.array(self._labels, dtype=np.int32)
+        return np.array(self.labels, dtype=np.int32)
 
-    def get_feature_names(self) -> list:
-        """Returns the ordered list of handcrafted feature names."""
-        return FEATURE_NAMES.copy()
+    def get_feature_names(self):
+        return feature_names.copy()
 
-    # ---------------------------------------------------------------- #
-    # Single URL feature extraction
-    # ---------------------------------------------------------------- #
+    # ---- single url feature extraction ----
 
-    def _extract_one(self, url: str) -> list:
-        """Extract all handcrafted features for a single URL string."""
-
-        # re-add scheme so urlparse works correctly
+    def _extract_one(self, url):
+        # need the scheme prefix so urlparse handles it properly
         parse_url = "http://" + url if not url.startswith("http") else url
-        parsed    = urlparse(parse_url)
-        domain    = parsed.hostname or ""
-        path      = parsed.path or ""
-        full      = url  # use cleaned (no scheme) for length/char counts
+        parsed = urlparse(parse_url)
+        domain = parsed.hostname or ""
+        path = parsed.path or ""
+        full = url  # use the scheme-stripped version for char counts
 
-        length        = len(full)
-        domain_len    = len(domain)
-        path_len      = len(path)
+        n = len(full)
+        dom_len = len(domain)
+        path_len = len(path)
 
-        # --- length-based ---
-        subdomain_count = max(domain.count(".") - 1, 0)
-        path_depth      = path.count("/")
+        # length features
+        num_subdomains = max(domain.count(".") - 1, 0)
+        path_depth = path.count("/")
 
-        # --- character counts ---
-        count_dots        = full.count(".")
-        count_hyphens     = full.count("-")
-        count_underscores = full.count("_")
-        count_slashes     = full.count("/")
-        count_at          = full.count("@")
-        count_question    = full.count("?")
-        count_equals      = full.count("=")
-        count_ampersand   = full.count("&")
-        count_percent     = full.count("%")
-        count_digits      = sum(c.isdigit() for c in full)
+        # character count features
+        dots = full.count(".")
+        hyphens = full.count("-")
+        underscores = full.count("_")
+        slashes = full.count("/")
+        at = full.count("@")
+        qmarks = full.count("?")
+        equals = full.count("=")
+        amps = full.count("&")
+        pct = full.count("%")
+        digits = sum(c.isdigit() for c in full)
 
-        # --- ratio-based ---
-        digit_ratio       = count_digits / length if length else 0
-        letter_ratio      = sum(c.isalpha() for c in full) / length if length else 0
-        special_ratio     = sum(not c.isalnum() for c in full) / length if length else 0
+        # ratios
+        digit_ratio = digits / n if n else 0
+        letter_ratio = sum(c.isalpha() for c in full) / n if n else 0
+        special_ratio = sum(not c.isalnum() for c in full) / n if n else 0
 
-        # --- entropy ---
-        url_entropy    = self._shannon_entropy(full)
-        domain_entropy = self._shannon_entropy(domain)
+        # entropy
+        url_ent = self._shannon_entropy(full)
+        dom_ent = self._shannon_entropy(domain)
 
-        # --- binary flags ---
-        has_ip          = int(bool(re.match(r"^\d{1,3}(\.\d{1,3}){3}$", domain)))
-        has_port        = int(parsed.port is not None)
-        has_https       = int(parse_url.startswith("https"))
-        has_http        = int(parse_url.startswith("http://"))
-        has_at          = int("@" in full)
-        has_double_sl   = int("//" in path)
-        has_dash_domain = int("-" in domain)
-        is_shortened    = int(domain in _SHORTENERS)
+        # binary flags
+        is_ip = int(bool(re.match(r"^\d{1,3}(\.\d{1,3}){3}$", domain)))
+        has_port = int(parsed.port is not None)
+        is_https = int(parse_url.startswith("https"))
+        is_http = int(parse_url.startswith("http://"))
+        has_at = int("@" in full)
+        double_slash = int("//" in path)
+        dash_in_domain = int("-" in domain)
+        shortened = int(domain in shortener_list)
 
         return [
-            length, domain_len, path_len, subdomain_count, path_depth,
-            count_dots, count_hyphens, count_underscores, count_slashes,
-            count_at, count_question, count_equals, count_ampersand,
-            count_percent, count_digits,
+            n, dom_len, path_len, num_subdomains, path_depth,
+            dots, hyphens, underscores, slashes,
+            at, qmarks, equals, amps,
+            pct, digits,
             digit_ratio, letter_ratio, special_ratio,
-            url_entropy, domain_entropy,
-            has_ip, has_port, has_https, has_http, has_at,
-            has_double_sl, has_dash_domain, is_shortened,
+            url_ent, dom_ent,
+            is_ip, has_port, is_https, is_http, has_at,
+            double_slash, dash_in_domain, shortened,
         ]
 
-    # ---------------------------------------------------------------- #
-    # Helpers
-    # ---------------------------------------------------------------- #
+    # ---- helpers ----
 
     @staticmethod
-    def _shannon_entropy(s: str) -> float:
-        """Shannon entropy of a string — higher means more random/suspicious."""
+    def _shannon_entropy(s):
+        # measures how random/chaotic a string is
+        # higher = more suspicious looking (random subdomains etc)
         if not s:
             return 0.0
         freq = {}
@@ -241,6 +205,5 @@ class FeatureExtractor:
         return -sum((v / n) * np.log2(v / n) for v in freq.values())
 
     def _check_loaded(self):
-        if not self._urls:
-            raise RuntimeError("No data loaded. Call load_from_file() first.")
-
+        if not self.urls:
+            raise RuntimeError("no data loaded - call load_from_file() first")

@@ -1,14 +1,10 @@
-"""
-summary.py
-----------
-Reads all raw_test_results.json files under test_results/ and produces:
-  - test_results/metrics.png      (accuracy comparison across all models)
-  - test_results/running_time.png (training time comparison across all models)
-
-Usage:
-  python summary.py
-  python summary.py --results_dir test_results
-"""
+# summary.py
+# reads all raw_test_results.json files under test_results/ and
+# generates comparison charts across all trained models
+#
+# usage:
+#   python summary.py
+#   python summary.py --results_dir test_results
 
 import argparse
 import json
@@ -20,8 +16,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def collect_results(results_dir: str) -> list:
-    """Walk results_dir and collect all raw_test_results.json entries."""
+def collect_results(results_dir):
+    # walk the results directory and collect all result files
     records = []
     for category in sorted(os.listdir(results_dir)):
         cat_path = os.path.join(results_dir, category)
@@ -43,54 +39,54 @@ def collect_results(results_dir: str) -> list:
     return records
 
 
-def plot_metrics(records: list, out_path: str):
-    """Bar chart of test accuracy for all models."""
-    labels   = [r["label"]   for r in records]
-    accuracy = [r["accuracy"] for r in records]
+def plot_metrics(records, out_path):
+    # bar chart comparing test accuracy across all models
+    labels = [r["label"] for r in records]
+    accs = [r["accuracy"] for r in records]
 
-    # colour by category
+    # colour-code bars by category
     categories = list(dict.fromkeys(r["category"] for r in records))
-    palette    = plt.cm.tab10.colors
-    colors     = [palette[categories.index(r["category"]) % len(palette)] for r in records]
+    palette = plt.cm.tab10.colors
+    colors = [palette[categories.index(r["category"]) % len(palette)] for r in records]
 
     x = np.arange(len(labels))
     fig, ax = plt.subplots(figsize=(max(10, len(labels) * 1.4), 6))
-    bars = ax.bar(x, accuracy, color=colors, edgecolor="white", linewidth=0.8)
+    bars = ax.bar(x, accs, color=colors, edgecolor="white", linewidth=0.8)
 
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=8, ha="center")
     ax.set_ylim(0, 1.05)
-    ax.set_ylabel("Test Accuracy")
-    ax.set_title("Model Accuracy Comparison")
+    ax.set_ylabel("test accuracy")
+    ax.set_title("model accuracy comparison")
     ax.grid(axis="y", alpha=0.3)
 
-    for bar, acc in zip(bars, accuracy):
+    # show accuracy value above each bar
+    for bar, acc in zip(bars, accs):
         ax.text(bar.get_x() + bar.get_width() / 2,
                 bar.get_height() + 0.01,
                 f"{acc:.3f}", ha="center", va="bottom", fontsize=7)
 
-    # legend for categories
+    # legend showing categories
     handles = [
         plt.Rectangle((0, 0), 1, 1, color=palette[i % len(palette)])
         for i, _ in enumerate(categories)
     ]
-    ax.legend(handles, categories, title="Category", fontsize=8,
-              loc="lower right", framealpha=0.8)
+    ax.legend(handles, categories, title="category", fontsize=8, loc="lower right", framealpha=0.8)
 
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
     plt.close(fig)
-    print(f"[summary] Saved: {out_path}")
+    print(f"saved: {out_path}")
 
 
-def plot_running_time(records: list, out_path: str):
-    """Horizontal bar chart of training time for all models."""
-    labels = [r["label"]         for r in records]
-    times  = [r["training_time"] for r in records]
+def plot_running_time(records, out_path):
+    # horizontal bar chart showing how long each model took to train
+    labels = [r["label"] for r in records]
+    times = [r["training_time"] for r in records]
 
     categories = list(dict.fromkeys(r["category"] for r in records))
-    palette    = plt.cm.tab10.colors
-    colors     = [palette[categories.index(r["category"]) % len(palette)] for r in records]
+    palette = plt.cm.tab10.colors
+    colors = [palette[categories.index(r["category"]) % len(palette)] for r in records]
 
     y = np.arange(len(labels))
     fig, ax = plt.subplots(figsize=(10, max(5, len(labels) * 0.55)))
@@ -98,11 +94,12 @@ def plot_running_time(records: list, out_path: str):
 
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=8)
-    ax.set_xlabel("Training Time (seconds)")
-    ax.set_title("Model Training Time Comparison")
+    ax.set_xlabel("training time (seconds)")
+    ax.set_title("model training time comparison")
     ax.grid(axis="x", alpha=0.3)
     ax.invert_yaxis()
 
+    # show time value at end of each bar
     for bar, t in zip(bars, times):
         ax.text(bar.get_width() + max(times) * 0.01,
                 bar.get_y() + bar.get_height() / 2,
@@ -112,28 +109,26 @@ def plot_running_time(records: list, out_path: str):
         plt.Rectangle((0, 0), 1, 1, color=palette[i % len(palette)])
         for i, _ in enumerate(categories)
     ]
-    ax.legend(handles, categories, title="Category", fontsize=8,
-              loc="lower right", framealpha=0.8)
+    ax.legend(handles, categories, title="category", fontsize=8, loc="lower right", framealpha=0.8)
 
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
     plt.close(fig)
-    print(f"[summary] Saved: {out_path}")
+    print(f"saved: {out_path}")
 
 
 def main(args):
     if not os.path.isdir(args.results_dir):
-        print(f"[summary] Directory not found: {args.results_dir}")
+        print(f"directory not found: {args.results_dir}")
         return
 
     records = collect_results(args.results_dir)
     if not records:
-        print("[summary] No raw_test_results.json files found. Run evaluate.py first.")
+        print("no raw_test_results.json files found - run evaluate.py first")
         return
 
-    print(f"[summary] Found {len(records)} model result(s).")
-
-    plot_metrics(     records, os.path.join(args.results_dir, "metrics.png"))
+    print(f"found {len(records)} model result(s)")
+    plot_metrics(records, os.path.join(args.results_dir, "metrics.png"))
     plot_running_time(records, os.path.join(args.results_dir, "running_time.png"))
 
 
