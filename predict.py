@@ -9,7 +9,7 @@ from feature_extraction import FeatureExtractor
 TRUSTED = ["google.com", "facebook.com", "apple.com", "microsoft.com", "amazon.com", "github.com"]
 
 # analyze a single url and print results
-def check_url(url, model_path, char_index_path, seq_len=512):
+def check_url(url, model_path, char_index_path, seq_len=200):
     print(f"--- Checking: {url} ---")
     
     # clean url
@@ -32,7 +32,7 @@ def check_url(url, model_path, char_index_path, seq_len=512):
     extractor = FeatureExtractor(char_index_path=char_index_path)
     
     # clean url
-    clean_url = url.lower().replace("http://", "").replace("https://", "")
+    clean_url = url.lower()
     extractor.urls = [clean_url]
     
     # model check
@@ -50,8 +50,8 @@ def check_url(url, model_path, char_index_path, seq_len=512):
     prediction = model.predict(features, verbose=0)[0][0]
     
     # results check
-    label = "PHISHING" if prediction < 0.5 else "LEGITIMATE"
-    confidence = (1 - prediction) if prediction < 0.5 else prediction
+    label = "PHISHING" if prediction >= 0.5 else "LEGITIMATE"
+    confidence = prediction if prediction >= 0.5 else (1 - prediction)
     
     print("\n" + "="*30)
     print(f"  RESULT:     {label}")

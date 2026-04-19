@@ -1,7 +1,7 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten, Embedding, Dropout
+from tensorflow.keras.layers import Dense, Flatten, Embedding
 
-# ann using character embeddings
+# complex ann model with 7 layers
 class AnnComplex:
     def __init__(self, embed_dim, seq_len):
         self.embed_dim = embed_dim
@@ -13,10 +13,17 @@ class AnnComplex:
         
         # embed chars
         model.add(Embedding(vocab_size + 1, self.embed_dim, input_length=self.seq_len))
-        model.add(Flatten())
         
+        # 7 dense layers (applied as time-distributed or on flattened features)
+        # following the sequence in Table 5
         model.add(Dense(128, activation="relu"))
-        model.add(Dropout(0.3))
-        model.add(Dense(64, activation="relu"))
+        model.add(Dense(128, activation="relu"))
+        model.add(Dense(128, activation="relu"))
+        model.add(Dense(128, activation="relu"))
+        model.add(Dense(128, activation="relu"))
+        model.add(Dense(128, activation="relu"))
+        model.add(Dense(128, activation="relu"))
+        
+        model.add(Flatten())
         model.add(Dense(1, activation="sigmoid"))
         return model
