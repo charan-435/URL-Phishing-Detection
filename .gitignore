@@ -34,4 +34,6 @@ models/**/*.h5
 .idea/
 .DS_Store
 Thumbs.db
-
+__pycache__
+TRADITIONAL_ML_MODELS/output_data/ET/ET_model.joblib
+TRADITIONAL_ML_MODELS/output_data/RF/RF_model.joblib
