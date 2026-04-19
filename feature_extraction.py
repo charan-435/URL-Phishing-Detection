@@ -18,6 +18,7 @@ feature_names = [
     "url_entropy", "domain_entropy",
     "has_ip_address", "has_port", "has_https", "has_http", "has_at_symbol",
     "has_double_slash", "has_dash_in_domain", "is_shortened",
+    "char_repeat_count", "parameter_count",
 ]
 
 # common redirect links
@@ -52,20 +53,20 @@ class FeatureExtractor:
 
             label_str, url = parts[0], parts[1]
             if label_str == "phishing":
-                label = 0
+                label = 1  # positive class in paper
             elif label_str == "legitimate":
-                label = 1
+                label = 0
             else:
                 skipped += 1
                 continue
 
-            # normalize url
-            clean = url.lower().replace("http://", "").replace("https://", "")
+            # normalize url - keep protocol as per paper Fig 4
+            clean = url.lower()
             self.urls.append(clean)
             self.labels.append(label)
         print(f"done: {len(self.urls)} urls")
 
-    def get_sequences(self, sequence_length=512):
+    def get_sequences(self, sequence_length=200):
         # convert urls to numbers
         self._check_loaded()
         seqs = self.tokener.texts_to_sequences(self.urls)
@@ -89,7 +90,8 @@ class FeatureExtractor:
 
     def _extract_one(self, url):
         # get features for 1 url
-        parse_url = "http://" + url if not url.startswith("http") else url
+        # ensure url has protocol for parsing if it was stripped before
+        parse_url = url if "://" in url else "http://" + url
         parsed = urlparse(parse_url)
         domain = parsed.hostname or ""
         path = parsed.path or ""
@@ -132,6 +134,20 @@ class FeatureExtractor:
         dash_in_domain = int("-" in domain)
         shortened = int(domain in shortener_list)
 
+        # new features to reach 30
+        repeat_count = 0
+        if full:
+            current_repeat = 1
+            for i in range(1, len(full)):
+                if full[i] == full[i-1]:
+                    current_repeat += 1
+                else:
+                    repeat_count = max(repeat_count, current_repeat)
+                    current_repeat = 1
+            repeat_count = max(repeat_count, current_repeat)
+        
+        param_count = len(parsed.query.split('&')) if parsed.query else 0
+
         return [
             n, dom_len, path_len, num_subdomains, path_depth,
             dots, hyphens, underscores, slashes,
@@ -141,6 +157,7 @@ class FeatureExtractor:
             url_ent, dom_ent,
             is_ip, has_port, is_https, is_http, has_at,
             double_slash, dash_in_domain, shortened,
+            repeat_count, param_count
         ]
 
     @staticmethod

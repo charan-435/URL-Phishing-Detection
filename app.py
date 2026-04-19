@@ -9,7 +9,7 @@ app = Flask(__name__)
 # config
 MODEL_PATH = "test_results/baseline/cnn_complex/model_all.keras"
 INDEX_PATH = "dataset/char_index"
-SEQ_LEN = 512
+SEQ_LEN = 200
 
 # top domains to avoid false positives
 WHITELIST = ["google.com", "facebook.com", "apple.com", "microsoft.com", "amazon.com", "github.com"]
@@ -51,8 +51,8 @@ def check():
     pred = model.predict(features, verbose=0)[0][0]
     
     # result logic
-    is_phishing = pred < 0.5
-    conf = (1 - pred) if is_phishing else pred
+    is_phishing = pred >= 0.5
+    conf = pred if is_phishing else (1 - pred)
     
     return jsonify({
         "url": url,
