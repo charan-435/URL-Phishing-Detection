@@ -1,25 +1,26 @@
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, Embedding, MultiHeadAttention, Input, GlobalAveragePooling1D
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Embedding, Flatten
+from keras_self_attention import SeqSelfAttention
 
-# basic attention model
+# attention model based on Table 5
 class AttBase:
     def __init__(self, embed_dim, seq_len):
         self.embed_dim = embed_dim
         self.seq_len = seq_len
 
     def build(self, char_index):
-        # uses functional api for attention
+        # build architecture
         vocab_size = len(char_index)
-        inputs = Input(shape=(self.seq_len,))
-
+        model = Sequential(name="att_base")
+        
         # embed chars
-        x = Embedding(vocab_size + 1, self.embed_dim, input_length=self.seq_len)(inputs)
-
-        # multi-head attention
-        x = MultiHeadAttention(num_heads=4, key_dim=self.embed_dim)(x, x)
-
-        # mean pooling 
-        x = GlobalAveragePooling1D()(x)
-        outputs = Dense(1, activation="sigmoid")(x)
-
-        return Model(inputs, outputs, name="att_base")
+        model.add(Embedding(vocab_size + 1, self.embed_dim, input_length=self.seq_len))
+        
+        # self attention layer
+        model.add(SeqSelfAttention(attention_activation='sigmoid'))
+        
+        # flatten and final dense
+        model.add(Flatten())
+        model.add(Dense(1, activation="sigmoid"))
+        
+        return model
