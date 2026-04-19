@@ -20,8 +20,6 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-directml-env
-__pycache__
 
 # Trained Models
 models/**/*.keras
@@ -34,10 +32,6 @@ models/**/*.h5
 .idea/
 .DS_Store
 Thumbs.db
-
-# Python
-__pycache__/
-*.pyc
 
 # Virtual env
 directml-env/
