@@ -6,7 +6,7 @@
 
 This repository contains the implementation of the **DEPHIDES** (Deep Hierarchical Phishing Detection System) framework, a robust deep-learning-based approach for identifying malicious URLs with over **97% accuracy**.
 
-## 🚀 Key Features
+##  Key Features
 
 - **Character-Level Embeddings**: Processes URLs as raw character sequences to capture fine-grained patterns and handle zero-day obfuscations.
 - **Dual-Stream Analysis**: Combines deep character embeddings with a specialized taxonomy of **30 hand-crafted lexical features**.
@@ -17,7 +17,7 @@ This repository contains the implementation of the **DEPHIDES** (Deep Hierarchic
     - **ANN** (Artificial Neural Networks) - Deep baseline dense networks.
 - **Traditional ML Support**: Includes implementations for Random Forest, SVM, and Logistic Regression.
 
-## 📁 Repository Structure
+## Repository Structure
 
 - `models/`: Architecture definitions for all neural network types.
     - `Traditional_ML/`: Classical machine learning models and predictors.
@@ -28,7 +28,7 @@ This repository contains the implementation of the **DEPHIDES** (Deep Hierarchic
 - `feature_extraction.py`: The core logic for extracting the 30 hand-crafted features and character sequences.
 - `DEPHIDES_Report_Extended.tex`: A comprehensive **4-page technical report** detailing the methodology and results.
 
-## 🛠️ Usage Instructions
+## Usage Instructions
 
 ### 1. Installation
 Install the necessary dependencies using:
@@ -53,11 +53,8 @@ Our system utilizes 30 specific lexical features including:
 - **Security Protocols**: IP address usage, non-standard port detection, HTTPS/HTTP status.
 - **Obfuscation Markers**: URL shortener detection and character repetition counts.
 
-## 📄 Documentation
-For a deep dive into the mathematical formulations and architectural specifics (including the 17-layer CNN breakdown), refer to the expanded technical report:
-- [DEPHIDES_Report_Extended.tex](DEPHIDES_Report_Extended.tex)
 
-## 📊 Results Summary
+## Results Summary
 The system achieves peak performance using the **CNN Complex** and **BRNN Complex** models, reaching an accuracy of **97.4%**. Detailed metrics and GPU utilization plots are generated automatically in the `test_results/` directory after each run.
 
 ---
