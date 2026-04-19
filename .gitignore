@@ -37,3 +37,7 @@ Thumbs.db
 __pycache__
 TRADITIONAL_ML_MODELS/output_data/ET/ET_model.joblib
 TRADITIONAL_ML_MODELS/output_data/RF/RF_model.joblib
+TRADITIONAL_ML_MODELS/output_data/feature_scaler.joblib
+TRADITIONAL_ML_MODELS/output_data/NB/NB_model.joblib
+TRADITIONAL_ML_MODELS/output_data/LR/LR_model.joblib
+TRADITIONAL_ML_MODELS/output_data/GB/GB_model.joblib
