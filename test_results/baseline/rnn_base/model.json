@@ -1,0 +1,191 @@
+{
+  "class_name": "Sequential",
+  "config": {
+<<<<<<< HEAD:test_results/baseline/cnn_base/model.json
+    "name": "cnn_base",
+=======
+    "name": "rnn_base",
+    "trainable": true,
+    "dtype": {
+      "module": "keras",
+      "class_name": "DTypePolicy",
+      "config": {
+        "name": "float32"
+      },
+      "registered_name": null
+    },
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952:test_results/baseline/rnn_base/model.json
+    "layers": [
+      {
+        "class_name": "InputLayer",
+        "config": {
+          "batch_input_shape": [
+            null,
+            512
+          ],
+          "dtype": "float32",
+          "sparse": false,
+          "ragged": false,
+          "name": "embedding_input"
+        }
+      },
+      {
+        "class_name": "Embedding",
+        "config": {
+          "name": "embedding",
+          "trainable": true,
+          "batch_input_shape": [
+            null,
+            512
+          ],
+          "dtype": "float32",
+          "input_dim": 71,
+          "output_dim": 128,
+          "embeddings_initializer": {
+            "class_name": "RandomUniform",
+            "config": {
+              "minval": -0.05,
+              "maxval": 0.05,
+              "seed": null
+            }
+          },
+          "embeddings_regularizer": null,
+          "activity_regularizer": null,
+          "embeddings_constraint": null,
+<<<<<<< HEAD:test_results/baseline/cnn_base/model.json
+          "mask_zero": false,
+          "input_length": 512
+        }
+      },
+      {
+        "class_name": "Conv1D",
+=======
+          "mask_zero": false
+        },
+        "registered_name": null
+      },
+      {
+        "module": "keras.layers",
+        "class_name": "LSTM",
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952:test_results/baseline/rnn_base/model.json
+        "config": {
+          "name": "lstm",
+          "trainable": true,
+<<<<<<< HEAD:test_results/baseline/cnn_base/model.json
+          "dtype": "float32",
+          "filters": 128,
+          "kernel_size": [
+            3
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "valid",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+=======
+          "dtype": {
+            "module": "keras",
+            "class_name": "DTypePolicy",
+            "config": {
+              "name": "float32"
+            },
+            "registered_name": null
+          },
+          "return_sequences": false,
+          "return_state": false,
+          "go_backwards": false,
+          "stateful": false,
+          "unroll": false,
+          "zero_output_for_mask": false,
+          "units": 128,
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952:test_results/baseline/rnn_base/model.json
+          "activation": "tanh",
+          "recurrent_activation": "sigmoid",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "recurrent_initializer": {
+            "module": "keras.initializers",
+            "class_name": "Orthogonal",
+            "config": {
+              "seed": null,
+              "gain": 1.0
+            },
+            "registered_name": null
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "unit_forget_bias": true,
+          "kernel_regularizer": null,
+          "recurrent_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+<<<<<<< HEAD:test_results/baseline/cnn_base/model.json
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Flatten",
+        "config": {
+          "name": "flatten",
+          "trainable": true,
+          "dtype": "float32",
+          "data_format": "channels_last"
+        }
+=======
+          "recurrent_constraint": null,
+          "bias_constraint": null,
+          "dropout": 0.0,
+          "recurrent_dropout": 0.0,
+          "seed": null
+        },
+        "registered_name": null
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952:test_results/baseline/rnn_base/model.json
+      },
+      {
+        "class_name": "Dense",
+        "config": {
+          "name": "output",
+          "trainable": true,
+          "dtype": "float32",
+          "units": 1,
+          "activation": "sigmoid",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+<<<<<<< HEAD:test_results/baseline/cnn_base/model.json
+        }
+=======
+        },
+        "registered_name": null
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952:test_results/baseline/rnn_base/model.json
+      }
+    ]
+  },
+  "keras_version": "2.10.0",
+  "backend": "tensorflow"
+}
