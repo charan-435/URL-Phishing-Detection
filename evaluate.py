@@ -34,7 +34,6 @@ def get_model(name, dim, seq):
         "ann_base": AnnBase, "ann_complex": AnnComplex
     }
     
-    if name == "ann_base": return AnnBase
     return mods[name](dim, seq)
 
 # monitoring gpu
@@ -96,29 +95,21 @@ def run_eval(args):
     
     # train data
     extractor.load_from_file("dataset/train/train.txt")
-    if args.model == "ann_base":
-        x_train = extractor.get_handcrafted()
-    else:
-        x_train = extractor.get_sequences(sequence_length=args.sequence_length)
+    x_train = extractor.get_sequences(sequence_length=args.sequence_length)
     y_train = extractor.get_labels()
 
     # test data
     test_ext = FeatureExtractor(char_index_path="dataset/char_index")
     test_ext.load_from_file("dataset/test/test.txt")
-    if args.model == "ann_base":
-        x_test = test_ext.get_handcrafted()
-    else:
-        x_test = test_ext.get_sequences(sequence_length=args.sequence_length)
+    x_test = test_ext.get_sequences(sequence_length=args.sequence_length)
     y_test = test_ext.get_labels()
 
     # setup model
     builder = get_model(args.model, args.embed_dim, args.sequence_length)
-    if args.model == "ann_base":
-        model = builder(feature_count=x_train.shape[1]).build()
-    else:
-        model = builder.build(extractor.tokener.word_index)
+    model = builder.build(extractor.tokener.word_index)
     
-    model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+    opt = tf.keras.optimizers.Adam(learning_rate=0.01)
+    model.compile(loss="binary_crossentropy", optimizer=opt, metrics=["accuracy"])
     
     # training start
     mon = GpuMonitor()
@@ -150,7 +141,7 @@ def run_eval(args):
     preds = (probs >= 0.5).astype(int)
 
     # report
-    rep = classification_report(y_test, preds, target_names=["phishing", "legit"])
+    rep = classification_report(y_test, preds, target_names=["legit", "phishing"])
     print(rep)
     with open(os.path.join(dest, "classification_report.txt"), "w") as f: f.write(rep)
 
@@ -166,8 +157,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--category", type=str, default="baseline")
     parser.add_argument("--model", type=str, default="cnn_base")
-    parser.add_argument("--embed_dim", type=int, default=128)
-    parser.add_argument("--sequence_length", type=int, default=512)
-    parser.add_argument("--epochs", type=int, default=10)
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--embed_dim", type=int, default=50)
+    parser.add_argument("--sequence_length", type=int, default=200)
+    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument("--batch_size", type=int, default=1024)
     run_eval(parser.parse_args())
