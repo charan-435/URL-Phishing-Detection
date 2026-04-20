@@ -1,4 +1,60 @@
 Model: "cnn_complex"
+<<<<<<< HEAD
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ embedding (Embedding)       (None, 512, 128)          9088      
+                                                                 
+ conv1 (Conv1D)              (None, 510, 128)          49280     
+                                                                 
+ pool1 (MaxPooling1D)        (None, 170, 128)          0         
+                                                                 
+ conv2 (Conv1D)              (None, 170, 256)          229632    
+                                                                 
+ conv3 (Conv1D)              (None, 170, 96)           122976    
+                                                                 
+ conv4 (Conv1D)              (None, 170, 128)          36992     
+                                                                 
+ pool2 (MaxPooling1D)        (None, 56, 128)           0         
+                                                                 
+ conv5 (Conv1D)              (None, 56, 196)           125636    
+                                                                 
+ conv6 (Conv1D)              (None, 56, 128)           75392     
+                                                                 
+ conv7 (Conv1D)              (None, 56, 96)            61536     
+                                                                 
+ conv8 (Conv1D)              (None, 56, 128)           36992     
+                                                                 
+ conv9 (Conv1D)              (None, 56, 196)           125636    
+                                                                 
+ conv10 (Conv1D)             (None, 56, 128)           175744    
+                                                                 
+ conv11 (Conv1D)             (None, 56, 96)            36960     
+                                                                 
+ pool3 (MaxPooling1D)        (None, 18, 96)            0         
+                                                                 
+ conv12 (Conv1D)             (None, 18, 196)           94276     
+                                                                 
+ conv13 (Conv1D)             (None, 18, 128)           175744    
+                                                                 
+ pool4 (MaxPooling1D)        (None, 6, 128)            0         
+                                                                 
+ conv14 (Conv1D)             (None, 6, 196)            125636    
+                                                                 
+ conv15 (Conv1D)             (None, 6, 128)            175744    
+                                                                 
+ conv16 (Conv1D)             (None, 6, 96)             36960     
+                                                                 
+ flatten (Flatten)           (None, 576)               0         
+                                                                 
+ output (Dense)              (None, 1)                 577       
+                                                                 
+=================================================================
+Total params: 1,694,801
+Trainable params: 1,694,801
+Non-trainable params: 0
+_________________________________________________________________
+=======
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
@@ -39,3 +95,4 @@ Model: "cnn_complex"
  Trainable params: 0 (0.00 B)
  Non-trainable params: 0 (0.00 B)
 
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952

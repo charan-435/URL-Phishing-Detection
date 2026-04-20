@@ -1,4 +1,24 @@
 {
+<<<<<<< HEAD
+  "class_name": "Sequential",
+  "config": {
+    "name": "cnn_complex",
+    "layers": [
+      {
+        "class_name": "InputLayer",
+        "config": {
+          "batch_input_shape": [
+            null,
+            512
+          ],
+          "dtype": "float32",
+          "sparse": false,
+          "ragged": false,
+          "name": "embedding_input"
+        }
+      },
+      {
+=======
   "module": "keras",
   "class_name": "Sequential",
   "config": {
@@ -15,10 +35,27 @@
     "layers": [
       {
         "module": "keras.layers",
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
         "class_name": "Embedding",
         "config": {
           "name": "embedding",
           "trainable": true,
+<<<<<<< HEAD
+          "batch_input_shape": [
+            null,
+            512
+          ],
+          "dtype": "float32",
+          "input_dim": 71,
+          "output_dim": 128,
+          "embeddings_initializer": {
+            "class_name": "RandomUniform",
+            "config": {
+              "minval": -0.05,
+              "maxval": 0.05,
+              "seed": null
+            }
+=======
           "dtype": {
             "module": "keras",
             "class_name": "DTypePolicy",
@@ -38,20 +75,33 @@
               "maxval": 0.05
             },
             "registered_name": null
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           },
           "embeddings_regularizer": null,
           "activity_regularizer": null,
           "embeddings_constraint": null,
+<<<<<<< HEAD
+          "mask_zero": false,
+          "input_length": 512
+        }
+      },
+      {
+=======
           "mask_zero": false
         },
         "registered_name": null
       },
       {
         "module": "keras.layers",
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
         "class_name": "Conv1D",
         "config": {
           "name": "conv1",
           "trainable": true,
+<<<<<<< HEAD
+          "dtype": "float32",
+          "filters": 128,
+=======
           "dtype": {
             "module": "keras",
             "class_name": "DTypePolicy",
@@ -61,18 +111,36 @@
             "registered_name": null
           },
           "filters": 64,
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           "kernel_size": [
             3
           ],
           "strides": [
             1
           ],
+<<<<<<< HEAD
+          "padding": "valid",
+=======
           "padding": "same",
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           "data_format": "channels_last",
           "dilation_rate": [
             1
           ],
           "groups": 1,
+<<<<<<< HEAD
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+=======
           "activation": "relu",
           "use_bias": true,
           "kernel_initializer": {
@@ -88,12 +156,18 @@
             "class_name": "Zeros",
             "config": {},
             "registered_name": null
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           },
           "kernel_regularizer": null,
           "bias_regularizer": null,
           "activity_regularizer": null,
           "kernel_constraint": null,
           "bias_constraint": null
+<<<<<<< HEAD
+        }
+      },
+      {
+=======
         },
         "registered_name": null
       },
@@ -150,10 +224,25 @@
       },
       {
         "module": "keras.layers",
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
         "class_name": "MaxPooling1D",
         "config": {
           "name": "pool1",
           "trainable": true,
+<<<<<<< HEAD
+          "dtype": "float32",
+          "strides": [
+            3
+          ],
+          "pool_size": [
+            3
+          ],
+          "padding": "valid",
+          "data_format": "channels_last"
+        }
+      },
+      {
+=======
           "dtype": {
             "module": "keras",
             "class_name": "DTypePolicy",
@@ -195,10 +284,53 @@
       },
       {
         "module": "keras.layers",
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
         "class_name": "Conv1D",
         "config": {
           "name": "conv2",
           "trainable": true,
+<<<<<<< HEAD
+          "dtype": "float32",
+          "filters": 256,
+          "kernel_size": [
+            7
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv3",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 96,
+=======
           "dtype": {
             "module": "keras",
             "class_name": "DTypePolicy",
@@ -208,6 +340,7 @@
             "registered_name": null
           },
           "filters": 128,
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           "kernel_size": [
             5
           ],
@@ -220,6 +353,19 @@
             1
           ],
           "groups": 1,
+<<<<<<< HEAD
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+=======
           "activation": "relu",
           "use_bias": true,
           "kernel_initializer": {
@@ -235,12 +381,56 @@
             "class_name": "Zeros",
             "config": {},
             "registered_name": null
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           },
           "kernel_regularizer": null,
           "bias_regularizer": null,
           "activity_regularizer": null,
           "kernel_constraint": null,
           "bias_constraint": null
+<<<<<<< HEAD
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv4",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 128,
+          "kernel_size": [
+            3
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+=======
         },
         "registered_name": null
       },
@@ -297,10 +487,69 @@
       },
       {
         "module": "keras.layers",
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
         "class_name": "MaxPooling1D",
         "config": {
           "name": "pool2",
           "trainable": true,
+<<<<<<< HEAD
+          "dtype": "float32",
+          "strides": [
+            3
+          ],
+          "pool_size": [
+            3
+          ],
+          "padding": "valid",
+          "data_format": "channels_last"
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv5",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 196,
+          "kernel_size": [
+            5
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv6",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 128,
+=======
           "dtype": {
             "module": "keras",
             "class_name": "DTypePolicy",
@@ -355,6 +604,7 @@
             "registered_name": null
           },
           "filters": 256,
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           "kernel_size": [
             3
           ],
@@ -367,6 +617,19 @@
             1
           ],
           "groups": 1,
+<<<<<<< HEAD
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+=======
           "activation": "relu",
           "use_bias": true,
           "kernel_initializer": {
@@ -382,12 +645,439 @@
             "class_name": "Zeros",
             "config": {},
             "registered_name": null
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           },
           "kernel_regularizer": null,
           "bias_regularizer": null,
           "activity_regularizer": null,
           "kernel_constraint": null,
           "bias_constraint": null
+<<<<<<< HEAD
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv7",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 96,
+          "kernel_size": [
+            5
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv8",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 128,
+          "kernel_size": [
+            3
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv9",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 196,
+          "kernel_size": [
+            5
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv10",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 128,
+          "kernel_size": [
+            7
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv11",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 96,
+          "kernel_size": [
+            3
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "MaxPooling1D",
+        "config": {
+          "name": "pool3",
+          "trainable": true,
+          "dtype": "float32",
+          "strides": [
+            3
+          ],
+          "pool_size": [
+            3
+          ],
+          "padding": "valid",
+          "data_format": "channels_last"
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv12",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 196,
+          "kernel_size": [
+            5
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv13",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 128,
+          "kernel_size": [
+            7
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "MaxPooling1D",
+        "config": {
+          "name": "pool4",
+          "trainable": true,
+          "dtype": "float32",
+          "strides": [
+            3
+          ],
+          "pool_size": [
+            3
+          ],
+          "padding": "valid",
+          "data_format": "channels_last"
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv14",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 196,
+          "kernel_size": [
+            5
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv15",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 128,
+          "kernel_size": [
+            7
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Conv1D",
+        "config": {
+          "name": "conv16",
+          "trainable": true,
+          "dtype": "float32",
+          "filters": 96,
+          "kernel_size": [
+            3
+          ],
+          "strides": [
+            1
+          ],
+          "padding": "same",
+          "data_format": "channels_last",
+          "dilation_rate": [
+            1
+          ],
+          "groups": 1,
+          "activation": "tanh",
+          "use_bias": true,
+          "kernel_initializer": {
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      },
+      {
+        "class_name": "Flatten",
+        "config": {
+          "name": "flatten",
+          "trainable": true,
+          "dtype": "float32",
+          "data_format": "channels_last"
+        }
+      },
+      {
+=======
         },
         "registered_name": null
       },
@@ -541,10 +1231,14 @@
       },
       {
         "module": "keras.layers",
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
         "class_name": "Dense",
         "config": {
           "name": "output",
           "trainable": true,
+<<<<<<< HEAD
+          "dtype": "float32",
+=======
           "dtype": {
             "module": "keras",
             "class_name": "DTypePolicy",
@@ -553,10 +1247,33 @@
             },
             "registered_name": null
           },
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
           "units": 1,
           "activation": "sigmoid",
           "use_bias": true,
           "kernel_initializer": {
+<<<<<<< HEAD
+            "class_name": "GlorotUniform",
+            "config": {
+              "seed": null
+            }
+          },
+          "bias_initializer": {
+            "class_name": "Zeros",
+            "config": {}
+          },
+          "kernel_regularizer": null,
+          "bias_regularizer": null,
+          "activity_regularizer": null,
+          "kernel_constraint": null,
+          "bias_constraint": null
+        }
+      }
+    ]
+  },
+  "keras_version": "2.10.0",
+  "backend": "tensorflow"
+=======
             "module": "keras.initializers",
             "class_name": "GlorotUniform",
             "config": {
@@ -613,4 +1330,5 @@
     "steps_per_execution": 1,
     "jit_compile": true
   }
+>>>>>>> 98662543af963e7dd81efc2fdc51b519232a5952
 }
