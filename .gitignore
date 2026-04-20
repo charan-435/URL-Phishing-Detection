@@ -48,7 +48,7 @@ models/**/*.keras
 
 # Results and logs
 results/
-test_results/
+
 *.log
 
 # OS / IDE
