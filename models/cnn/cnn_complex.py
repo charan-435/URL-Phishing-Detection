@@ -1,14 +1,14 @@
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Conv1D, MaxPooling1D, Flatten, Embedding
 
-# complex cnn model based on Table 5
+# complex cnn model
 class CnnComplex:
     def __init__(self, embed_dim, seq_len):
         self.embed_dim = embed_dim
         self.seq_len = seq_len
 
     def build(self, char_index):
-        # 17-layer architecture from paper
+        # 17-layer architecture
         vocab_size = len(char_index)
         model = Sequential(name="cnn_complex")
 

@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 import sys
-import time
+import timeR
 import threading
 import matplotlib
 matplotlib.use("Agg")
