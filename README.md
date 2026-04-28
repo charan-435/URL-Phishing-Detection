@@ -87,6 +87,12 @@ If you use this work in your research, please cite the original paper:
 Additional codes, datasets and resources can be accessed here:
 [ACCESS ZIP FILES HERE](https://drive.google.com/drive/folders/1fm0BF7NthGBoaQ2qrlfeu7sARIdL1NMK?usp=sharing)
 
+## Implemented By
+
+1. **[Menni Charan Sree Teja](https://github.com/charan-435)**
+2. **[Ponaganti Sai Deva Charan](https://github.com/Charanponaganti)**
+3. **[Lalit Santosh Deshmane](https://github.com/lalitdeshmane10-cloud)**
+
 ---
-*Developed for research into character-level phishing detection and deep sequence modeling.*
+*Implementation for research into character-level phishing detection and deep sequence modeling.*
 
