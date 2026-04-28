@@ -46,10 +46,10 @@ Use `evaluate.py` to train and test a model. You can specify the model type, emb
 
 ```bash
 # Train the 17-layer CNN Complex model
-python evaluate.py --model cnn_complex --sequence_length 512 --epochs 10
+python evaluate.py --model cnn_complex --sequence_length 200 --epochs 10
 
 # Train the 7-layer BRNN Complex model
-python evaluate.py --model brnn_complex --sequence_length 512 --epochs 5 --category production
+python evaluate.py --model brnn_complex --sequence_length 200 --epochs 5 --category production
 ```
 
 **Available Models:**
