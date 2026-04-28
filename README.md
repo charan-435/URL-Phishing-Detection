@@ -1,3 +1,7 @@
+# ACCESS ZIP FILES HERE : 
+https://drive.google.com/drive/folders/1fm0BF7NthGBoaQ2qrlfeu7sARIdL1NMK?usp=sharing
+
+
 # DEPHIDES: Deep Learning Based Phishing Detection System
 
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
@@ -40,10 +44,10 @@ pip install -r requirements.txt
 Use `evaluate.py` to train and test a model. You can specify the model type, embedding dimensions, and sequence length.
 ```bash
 # Train the 17-layer CNN Complex model
-python evaluate.py --model cnn_complex --sequence_length 512 --epochs 10
+python evaluate.py --model cnn_complex --sequence_length 200 --epochs 10
 
 # Train the 7-layer BRNN Complex model
-python evaluate.py --model brnn_complex --sequence_length 512 --epochs 5
+python evaluate.py --model brnn_complex --sequence_length 200 --epochs 5
 ```
 
 ### 3. Feature Extraction Details (The 30 Features)
